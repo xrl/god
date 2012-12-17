@@ -35,6 +35,7 @@ template "/etc/god/master.god" do
   owner "root"
   group "root"
   mode 0755
+  variables :contacts => node[:god][:contacts]
 end
 
 runit_service "god"
