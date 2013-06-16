@@ -1,0 +1,1 @@
+default[:god][:contacts] = ['ops']

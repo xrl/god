@@ -13,8 +13,9 @@ God::Contacts::Email.server_settings = {
   :domain => "<%= node[:domain] %>",
 }
 
-God.contact(:email) do |c|
-  c.name = 'ops'
-  c.email = 'ops@<%= node[:domain] %>'
-end
-
+<% @contacts.each do |contact| %>
+  God.contact(:email) do |c|
+    c.name = '<%= contact %>'
+    c.email = '<%= [contact, node[:domain]].join('@') %>'
+  end
+<% end %>
