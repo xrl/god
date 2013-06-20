@@ -4,7 +4,7 @@
 God.load "/etc/god/conf.d/*.god"
 
 God::Contacts::Email.message_settings = {
-  :from => 'god@<%= node[:domain] %>'
+  :from => node['god']['email']['from']
 }
 
 God::Contacts::Email.server_settings = {
@@ -13,8 +13,12 @@ God::Contacts::Email.server_settings = {
   :domain => "<%= node[:domain] %>",
 }
 
-God.contact(:email) do |c|
-  c.name = 'ops'
-  c.email = 'ops@<%= node[:domain] %>'
-end
+<%- node[:god][:email][:contacts].each do |name,email| -%>
+  God.contact(:email) do |c|
+    c.name  = <%= name %>
+    c.email = <%= email %>
+  end
+<%- end -%>
+
+
 
