@@ -2,13 +2,13 @@
 
 God::Contacts::Email.defaults do |d|
   <% @email_settings.each do |setting, value| -%>
-   d.<%= setting %> = <%= value %>
+   d.<%= setting %> = <%= (setting == 'delivery_method') ? ":#{value}" : "\"#{value}\"" %>
   <% end -%>
 end
 
 God.contact(:email) do |c|
   <% @contact.each do |setting, value|-%>
-  c.<%= setting %> = <%= value %>
+  c.<%= setting %> = "<%= value %>"
   <% end -%>
 end
 

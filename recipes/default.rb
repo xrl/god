@@ -18,6 +18,10 @@
 # limitations under the License.
 #
 
+package 'ruby1.9.1-dev' do
+  action :install
+end
+
 gem_package "god" do
   action :install
 end
@@ -29,7 +33,13 @@ directory node['god']['base_path'] do
   mode 0755
 end
 
-template node['god']['base_path'] do
+directory node['god']['include_path'] do
+  owner "root"
+  group "root"
+  mode 0777
+end
+
+template node['god']['master_conf_path'] do
   source "master.god.erb"
   owner "root"
   group "root"
@@ -50,7 +60,7 @@ else "upstart"
   upstart_job "god" do  
     description "Starts the ruby God processor monitor"  
     environment(node['god']['upstart']['environment'])  
-    execute "god -D -c #{node['god']['master_path']} #{node['god']['upstart']['execute_options']}"  
+    exec "/usr/local/bin/god -D -c #{node['god']['master_conf_path']} #{node['god']['upstart']['execute_options']}"  
     action :create  
  end
   
