@@ -18,26 +18,48 @@ runit. Opscode does not have a `mongrel_runit` cookbook, however.
 ## Cookbooks:
 
 * runit
+* upstart
 
+Attributes
+==========
+The attributes define the directory structure:  
+
+* `node['god']['base_path']` - Base directory where master configuration and conf folder lies. Defaults to /etc/god   
+* `node['god']['master_conf_path']` - Path to master god configuration that will include other god confs.   
+* `node['god']['include_path']` - Path to directory with god confs.  
+
+These define how you want to manage god:
+* `node['god']['init_style']` - Init style management; Current support for runit and Upstart. Defaults to Upstart.    
+* `node['god']['upstart']['environment']` - Any environment variables you want to pass for god.  
+* `node['god']['upstart']['execute_options']` - Command line options for god.  
+
+You can also declare global vairables in the master god configuration file by passing in a hash to:   
+* `node['god']['globals']` - Variables you want to make available to the included god configuration files.  
+
+There are also email settings, but look in the attributes/default.rb for more details.  
+ 
 Usage
 =====
 
-This recipe is designed to be used through the `god_monitor` define. Create a god configuration file in your application's cookbook and then call `god_monitor`:
+This recipe is can  be used through the `god_monitor` define. Create a god configuration file in your application's cookbook and then call `god_monitor`:
 
     god_monitor "myproj" do
       config "myproj.god.erb"
     end
 
-A sample mongrel.god.erb is provided, though it assumes `mongrel_runit` is used. This can be used as a baseline for customization.
+A sample mongrel.god.erb is provided, though it assumes `mongrel_runit` is used. This can be used as a baseline for customization.  
+
+You can also just place a god file in the `node['god']['include_path']` location and restart god to load in the new configuratuions. 
 
 
 License and Author
 ==================
 
 Author:: Joshua Timberman (<joshua@opscode.com>)
+Author:: Diego Rodriguez (<drodriguez@opengov.com>)
 
 Copyright:: 2009, Opscode, Inc
-
+Copyright:: 2013, OpenGov
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at

@@ -70,4 +70,3 @@ else "upstart"
     action [:enable, :start]
   end
 end
-
