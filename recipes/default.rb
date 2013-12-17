@@ -21,6 +21,7 @@ include_recipe "runit"
 
 gem_package "god" do
   action :install
+  gem_binary "/usr/bin/gem"
 end
 
 directory "/etc/god/conf.d" do
@@ -37,4 +38,17 @@ template "/etc/god/master.god" do
   mode 0755
 end
 
-runit_service "god"
+if node['god']['init_style'] == 'runit'
+  runit_service "god"
+elsif node['god']['init_style'] == 'init'
+  template "/etc/init.d/god" do
+    source "god.init.erb"
+    owner "root"
+    group "root"
+    mode 0755
+  end
+
+  service "god" do
+    action :start
+  end
+end
