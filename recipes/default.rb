@@ -17,8 +17,6 @@
 # limitations under the License.
 #
 
-include_recipe "runit"
-
 gem_package "god" do
   action :install
   gem_binary "/usr/bin/gem"
@@ -39,6 +37,7 @@ template "/etc/god/master.god" do
 end
 
 if node['god']['init_style'] == 'runit'
+  include_recipe "runit"
   runit_service "god"
 elsif node['god']['init_style'] == 'init'
   template "/etc/init.d/god" do
