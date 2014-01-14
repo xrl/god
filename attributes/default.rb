@@ -1,5 +1,6 @@
 default['god']['bin']               = '/usr/bin/god'
 default['god']['init_style']        = 'runit'
+default['god']['install']           = true
 default['god']['email']['from']     = 'god@'+node[:domain].to_s
 default['god']['email']['contacts'] = [['dev', 'developers@'+node[:domain].to_s, 'developers']]
 

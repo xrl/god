@@ -17,9 +17,11 @@
 # limitations under the License.
 #
 
-gem_package "god" do
-  action :install
-  gem_binary "/usr/bin/gem"
+if node['god']['install'] 
+  gem_package "god" do
+    action :install
+    gem_binary "/usr/bin/gem"
+  end
 end
 
 directory "/etc/god/conf.d" do
