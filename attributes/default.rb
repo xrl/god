@@ -4,7 +4,7 @@ default['god']['master_conf_path'] = File.join(node['god']['base_path'], 'master
 default['god']['include_path'] = File.join(node['god']['base_path'], 'conf.d')
 
 # God gem settings
-default['god']['ruby']['deb_version'] = '2.0'
+default['god']['ruby']['deb_version'] = '1.9.1'
 default['god']['version'] = '0.13.5'
 
 # How you want to servicify god
