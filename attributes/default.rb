@@ -3,9 +3,14 @@ default['god']['base_path'] = '/etc/god'
 default['god']['master_conf_path'] = File.join(node['god']['base_path'], 'master.rb')
 default['god']['include_path'] = File.join(node['god']['base_path'], 'conf.d')
 
+# God gem settings
+default['god']['install_system_ruby'] = true
+default['god']['version'] = '0.13.5'
+
 # How you want to servicify god
-default['god']['init_style'] = 'upstart' 
-default['god']['upstart']['environment'] = {'PATH' => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", 'LANG' => "en_US.UTF-8"}
+default['god']['init_style'] = 'upstart'
+default['god']['upstart']['environment']['PATH'] = '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+default['god']['upstart']['environment']['LANG'] = 'en_US.UTF-8'
 default['god']['upstart']['execute_options'] = '--log-level info --no-syslog'
 
 # Email default settings

@@ -1,4 +1,3 @@
-#
 # Cookbook Name:: god
 # Definition:: god_monitor
 #
@@ -17,22 +16,19 @@
 # limitations under the License.
 #
 
-define :god_monitor, :config => "mongrel.god.erb", :max_memory => 100, :cpu => 50 do
-  include_recipe "god"
-  
+define(:god_monitor, config: 'mongrel.god.erb', max_memory: 100, cpu: 50) do
+  include_recipe 'god'
+
   template "/etc/god/conf.d/#{params[:name]}.god" do
-    source params[:config]
-    owner "root"
-    group "root"
-    mode 0644
-    variables(
-      :name => params[:name],
-      :max_memory => params[:max_memory],
-      :cpu => params[:cpu],
-      :sv_bin => node[:runit][:sv_bin],
-      :params => params
-    )
-    notifies :restart, resources(:service => "god")
+    source params['config']
+    owner 'root'
+    group 'root'
+    mode '0644'
+    variables(name: params['name'],
+              max_memory: params['max_memory'],
+              cpu: params['cpu'],
+              sv_bin: node['runit']['sv_bin'],
+              params: params)
+    notifies :restart, 'service[god]', :delayed
   end
-  
 end

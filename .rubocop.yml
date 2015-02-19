@@ -1,0 +1,11 @@
+AllCops:
+  Exclude:
+    - metadata.rb
+    - vagrant-chef-solo.rb
+    - 'vendor/**/*'
+    - 'definitions/*'
+
+Metrics/LineLength:
+  Max: 192
+
+inherit_from: .rubocop_todo.yml
