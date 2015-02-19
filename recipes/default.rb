@@ -18,10 +18,8 @@
 # limitations under the License.
 #
 
-if node['god']['install_system_ruby'] # ~FC023
-  package 'ruby1.9.1-dev' do
-    action :install
-  end
+package "ruby#{node['god']['ruby']['deb_version']}-dev" do
+  action :install
 end
 
 gem_package 'god' do
