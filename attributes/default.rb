@@ -2,6 +2,7 @@
 default['god']['base_path'] = '/etc/god'
 default['god']['master_conf_path'] = File.join(node['god']['base_path'], 'master.rb')
 default['god']['include_path'] = File.join(node['god']['base_path'], 'conf.d')
+default['god']['conf_extension'] = '.god.rb'
 
 # God gem settings
 default['god']['ruby']['deb_version'] = '1.9.1'

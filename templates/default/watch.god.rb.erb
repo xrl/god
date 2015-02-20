@@ -1,0 +1,82 @@
+# Launch script for <%= @app_name %>
+<%= @num_workers %>.times do |num|
+  God.watch do |w|
+    w.name = "<%= @app_name %>-#{num}"
+    w.group = '<%= @group_app_name %>'
+    w.uid = '<%= @user %>'
+    w.gid = '<%= @group %>'
+    w.log = '<%= @stdout_log_path %>'
+    w.err_log = '<%= @stderr_log_path %>'
+    w.interval = <%= @watch_interval %>
+    w.dir = '<%= @working_directory %>'
+    w.env =  <%= PP::pp(@env, StringIO.new).string %>
+
+    if <% @chroot %>
+    w.chroot = '<%= @chroot %>'
+    <% end %>
+
+    if <% @pid_file_path %>
+    w.pid_file = '<%= @pid_file_path %>'
+    w.behavior(:clean_pid_file)
+    <% end %>
+
+    w.behavior(:clean_pid_file)
+
+    w.start = '<%= @start_command %>'
+
+    <% if @restart_command %>
+    w.restart = '<%= @restart_command %>'
+    <% end %>
+
+    <% if @stop_command %>
+    w.stop  = '<%= @stop_command %>'
+    <% else %>
+    w.stop_signal = '<%= @stop_signal %>'
+    <% end %>
+
+    w.stop_timeout = <%= @stop_timeout %>.seconds
+
+    ##### Process state management
+    # determine the state on startup
+    w.transition(:init, { true => :up, false => :start }) do |on|
+      # If its already running, then transition to up state, otherwise
+      # transition to start state
+      on.condition(:process_running) do |c|
+        c.running = true
+      end
+    end
+
+    # determine when process has finished starting
+    w.transition([:start, :restart], :up) do |on|
+      # If the process is already running, transition to start state
+      on.condition(:process_running) do |c|
+        c.running = true
+      end
+
+      # Otherwise try starting the process again
+      on.condition(:tries) do |c|
+        c.times = 5
+        c.transition = :start
+      end
+    end
+
+    # start if process is not running
+    w.transition(:up, :start) do |on|
+      # If the process exits, transition to start state
+      on.condition(:process_exits)
+    end
+
+    # Detect flapping
+    w.lifecycle do |on|
+      on.condition(:flapping) do |c|
+        c.to_state = [:start, :restart]
+        c.times = 5
+        c.within = 10.minute
+        c.transition = :unmonitored
+        c.retry_in = 15.minutes
+        c.retry_times = 5
+        c.retry_within = 2.hours
+      end
+    end
+  end
+end
