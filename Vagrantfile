@@ -42,7 +42,7 @@ Vagrant.configure('2') do |config|
     chef.data_bags_path = ENV['CHEF_DATA_BAGS'] || '../../data_bags'
     chef.roles_path = ENV['CHEF_ROLES'] || '../../roles'
 
-    chef.run_list = ['recipe[god::default]']
+    chef.run_list = ['recipe[god::test]']
 
     chef.custom_config_path = 'vagrant-chef-solo.rb'
   end

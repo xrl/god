@@ -7,11 +7,11 @@ attribute :app_name, kind_of: String, name_attribute: true
 attribute :group_app_name, kind_of: String, name_attribute: true
 attribute :user, kind_of: String, required: true
 attribute :group, kind_of: String, required: true
-attribute :log_base_dir, kind_of: String, default: '/var/log'
-attribute :stdout_log_path, kind_of: String, default: lazy { |r| File.join(r.log_base_dir, r.app_name, "#{r.app_name}-god-stdout.log") }
-attribute :stderr_log_path, kind_of: String, default: lazy { |r| File.join(r.log_base_dir, r.app_name, "#{r.app_name}-god-stderr.log") }
-attribute :working_directory, kind_of: String, required: true
-attribute :runtime_environment, kind_of: Hash, default: {}
+attribute :log_base_dir, kind_of: String, default: lazy { |r| ::File.join('/var/log', r.app_name) }
+attribute :stdout_log_path, kind_of: String, default: lazy { |r| ::File.join(r.log_base_dir, "#{r.app_name}-god-stdout.log") }
+attribute :stderr_log_path, kind_of: String, default: lazy { |r| ::File.join(r.log_base_dir, "#{r.app_name}-god-stderr.log") }
+attribute :working_directory, kind_of: String, default: nil
+attribute :runtime_environment, kind_of: Hash, default: nil
 attribute :num_workers, kind_of: Fixnum, default: 1
 attribute :pid_file_path, kind_of: String, default: nil
 attribute :chroot, kind_of: String, default: nil

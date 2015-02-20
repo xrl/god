@@ -8,8 +8,19 @@ end
 
 # Creates a god watch
 action :create do
+  converge_by("[ god ] Creating log directory #{new_resource.log_base_dir}") do
+    directory "ruby-god-create-log-dir-#{new_resource.log_base_dir}" do
+      path new_resource.log_base_dir
+      recursive true
+      owner new_resource.user
+      group new_resource.group
+      mode '0755'
+    end
+  end
+
   converge_by("[ god ] Creating or updating god watch: #{new_resource}") do
     load_watch_name = "ruby-god-load-watch-#{new_resource.name}"
+
     template @current_resource.watch_path do
       source new_resource.template_name
       cookbook new_resource.template_cookbook_source
@@ -26,7 +37,7 @@ action :create do
                 stderr_log_path: new_resource.stderr_log_path,
                 watch_interval: new_resource.watch_interval,
                 working_directory: new_resource.working_directory,
-                env: new_resource.env,
+                env: new_resource.runtime_environment,
                 pid_file_path: new_resource.pid_file_path,
                 chroot: new_resource.chroot,
 
@@ -77,10 +88,10 @@ action :delete do
     end
 
     # Delete the watch file
-    ruby_block "ruby-god-delete-watch-#{new_resource.name}" do
-      block do
-        ::File.delete(@current_resource.watch_path)
-      end
+    file "ruby-god-delete-watch-#{new_resource.name}" do
+      path @current_resource.watch_path
+      sensitive new_resource.template_sensitive
+      action :delete
     end
 
     log "[ god ] God watch watch '#{new_resource}' successfully deleted"
@@ -99,7 +110,7 @@ end
 private
 
 def god_watch_path(name)
-  File.join(node['god']['include_path'],
+  ::File.join(node['god']['include_path'],
             name + node['god']['conf_extension'])
 end
 

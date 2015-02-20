@@ -9,7 +9,10 @@
     w.err_log = '<%= @stderr_log_path %>'
     w.interval = <%= @watch_interval %>
     w.dir = '<%= @working_directory %>'
+
+    if <% @env %>
     w.env =  <%= PP::pp(@env, StringIO.new).string %>
+    <% end %>
 
     if <% @chroot %>
     w.chroot = '<%= @chroot %>'
