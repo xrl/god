@@ -8,7 +8,7 @@ end
 
 # Creates a god watch
 action :create do
-  converge_by('[ god ] Creating or updating god watch: #{new_resource}') do
+  converge_by("[ god ] Creating or updating god watch: #{new_resource}") do
     load_watch_name = "ruby-god-load-watch-#{new_resource.name}"
     template @current_resource.watch_path do
       source new_resource.template_name
@@ -46,7 +46,7 @@ action :create do
 
     # We only need to restart the watch already existed
     execute load_watch_name do
-      command "god restart #{@current_resource.app_name}"
+      command "god restart #{@current_resource.group_app_name}"
       action :nothing
       only_if { @current_resource.watch_exists }
     end
@@ -55,12 +55,43 @@ end
 
 # Removes a god watch
 action :delete do
+  unless @current_resource.watch_exists
+    converge_by("[ god ] Not deleting the god watch because it doesn't exist: #{new_resource}") do
+      log "[ god ] Can not delete god watch '#{new_resource}' because it does not exist" do
+        level :warn
+      end
+    end
+
+    return
+  end
+
+  converge_by("[ god ] Deleting the god watch: #{new_resource}") do
+    # Stop the watch
+    execute "ruby-god-stop-watch-#{new_resource.name}" do
+      command "god stop #{@current_resource.group_app_name}"
+    end
+
+    # Remove the watch
+    execute "ruby-god-remove-watch-#{new_resource.name}" do
+      command "god remove #{@current_resource.group_app_name}"
+    end
+
+    # Delete the watch file
+    ruby_block "ruby-god-delete-watch-#{new_resource.name}" do
+      block do
+        ::File.delete(@current_resource.watch_path)
+      end
+    end
+
+    log "[ god ] God watch watch '#{new_resource}' successfully deleted"
+  end
 end
 
 # Loads the current state of the resource
 def load_current_resource
   @current_resource = Chef::Resource::GodWatch.new(new_resource.name)
   @current_resource.app_name(new_resource.app_name)
+  @current_resource.group_app_name(new_resource.app_name)
   @current_resource.watch_exists = god_watch_exists?(new_resource.app_name)
   @current_resource.watch_path = god_watch_path(new_resource.app_name)
 end
