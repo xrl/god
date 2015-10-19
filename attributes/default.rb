@@ -11,3 +11,4 @@ default['god']['email']['server']['server_auth'] = :plain
 default['god']['email']['server']['server_domain']   = ''
 default['god']['email']['server']['server_user']     = ''
 default['god']['email']['server']['server_password'] = ''
+default['ruby']['gem_binary'] = '/usr/bin/gem'
